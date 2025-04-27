@@ -11,6 +11,57 @@
     <h1>🌿 Bienvenue dans Garden Decor Advisor 🌿</h1>
     <p>Transformez votre jardin avec des idées de décoration personnalisées !</p>
     <button onclick="alert('Prochaine étape : prendre une photo et décorer !')">Commencer</button>
+    <br><br>
+
+<video id="video" width="320" height="240" autoplay style="display:none;"></video>
+<canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+
+<button id="start-camera" style="margin-top: 20px;">📸 Activer la Caméra</button>
+<button id="take-photo" style="margin-top: 20px; display:none;">📷 Prendre une Photo</button>
+
+<div id="photo-result" style="margin-top: 20px;"></div>
+
+<script>
+// Récupérer les éléments
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const startCameraButton = document.getElementById('start-camera');
+const takePhotoButton = document.getElementById('take-photo');
+const photoResult = document.getElementById('photo-result');
+
+// Activer la caméra
+startCameraButton.addEventListener('click', async function() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        video.style.display = 'block';
+        takePhotoButton.style.display = 'inline-block';
+    } catch (error) {
+        alert('Erreur d\'accès à la caméra : ' + error.message);
+    }
+});
+
+// Prendre la photo
+takePhotoButton.addEventListener('click', function() {
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Arrêter la caméra
+    let tracks = video.srcObject.getTracks();
+    tracks.forEach(track => track.stop());
+    video.style.display = 'none';
+    takePhotoButton.style.display = 'none';
+    
+    // Afficher la photo
+    const img = document.createElement('img');
+    img.src = canvas.toDataURL('image/png');
+    img.alt = 'Photo prise';
+    photoResult.innerHTML = '';
+    photoResult.appendChild(img);
+});
+</script>
 
     <script src="service-worker.js"></script>
 </body>
