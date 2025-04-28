@@ -20,121 +20,41 @@
 <button id="take-photo" style="margin-top: 20px; display:none;">📷 Prendre une Photo</button>
 
 <div id="photo-result" style="margin-top: 20px;"></div>
-    <script> ... </script>.
 <script>
-// Récupérer les éléments
-const video = document.getElementById('video');
-const canvas = document.getElementById('canvas');
-const startCameraButton = document.getElementById('start-camera');
-const takePhotoButton = document.getElementById('take-photo');
-const photoResult = document.getElementById('photo-result');
-    <!-- Section pour les décorations -->
-<div id="decorations" style="margin-top: 20px; text-align: center;">
-    <h3>Ajoutez des décorations :</h3>
-    <button onclick="addDecoration('papillon1.png')">🦋 Papillon 1</button>
-    <button onclick="addDecoration('papillon2.png')">🦋 Papillon 2</button>
-    <button onclick="addDecoration('fleur1.png')">🌸 Fleur 1</button>
-    <button onclick="addDecoration('fleur2.png')">🌺 Fleur 2</button>
-    <button onclick="addText('Mon Jardin')">🌿 Ajouter 'Mon Jardin'</button>
-    <button onclick="addText('Nature')">🌿 Ajouter 'Nature'</button>
-</div>
-
-<style>
-.decor {
-    position: absolute;
-    top: 100px;
-    left: 100px;
-    cursor: move;
-    width: 80px;
-    user-select: none;
-}
-.decor-text {
-    position: absolute;
-    top: 150px;
-    left: 150px;
-    font-size: 24px;
-    color: green;
-    font-weight: bold;
-    cursor: move;
-    user-select: none;
-}
-</style>
-
-<script>
-// Fonction pour ajouter une image décoration
-function addDecoration(imageName) {
-    const img = document.createElement('img');
-    img.src = 'decorations/' + imageName;
-    img.className = 'decor';
-    img.draggable = true;
-    makeDraggable(img);
-    document.body.appendChild(img);
-}
-
-// Fonction pour ajouter du texte
-function addText(textContent) {
-    const text = document.createElement('div');
-    text.className = 'decor-text';
-    text.innerText = textContent;
-    text.draggable = true;
-    makeDraggable(text);
-    document.body.appendChild(text);
-}
-
-// Rendre les éléments déplaçables
-function makeDraggable(element) {
-    let offsetX, offsetY;
-    
-    element.addEventListener('dragstart', function(e) {
-        offsetX = e.offsetX;
-        offsetY = e.offsetY;
+    // Activer la caméra
+    startCameraButton.addEventListener('click', async function() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            video.style.display = 'block';
+            takePhotoButton.style.display = 'inline-block';
+        } catch (error) {
+            alert('Erreur d\'accès à la caméra : ' + error.message);
+        }
     });
 
-    document.body.addEventListener('dragover', function(e) {
-        e.preventDefault();
+    // Prendre la photo
+    takePhotoButton.addEventListener('click', function() {
+        const context = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Arrêter la caméra
+        let tracks = video.srcObject.getTracks();
+        tracks.forEach(track => track.stop());
+        video.style.display = 'none';
+        takePhotoButton.style.display = 'none';
+        
+        // Afficher la photo
+        const img = document.createElement('img');
+        img.src = canvas.toDataURL('image/png');
+        img.alt = 'Photo prise';
+        photoResult.innerHTML = '';
+        photoResult.appendChild(img);
     });
-
-    document.body.addEventListener('drop', function(e) {
-        e.preventDefault();
-        element.style.left = (e.pageX - offsetX) + 'px';
-        element.style.top = (e.pageY - offsetY) + 'px';
-    });
-}
 </script>
 
-// Activer la caméra
-startCameraButton.addEventListener('click', async function() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        video.srcObject = stream;
-        video.style.display = 'block';
-        takePhotoButton.style.display = 'inline-block';
-    } catch (error) {
-        alert('Erreur d\'accès à la caméra : ' + error.message);
-    }
-});
-
-// Prendre la photo
-takePhotoButton.addEventListener('click', function() {
-    const context = canvas.getContext('2d');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    // Arrêter la caméra
-    let tracks = video.srcObject.getTracks();
-    tracks.forEach(track => track.stop());
-    video.style.display = 'none';
-    takePhotoButton.style.display = 'none';
-    
-    // Afficher la photo
-    const img = document.createElement('img');
-    img.src = canvas.toDataURL('image/png');
-    img.alt = 'Photo prise';
-    photoResult.innerHTML = '';
-    photoResult.appendChild(img);
-});
-</script>
 
     <script src="service-worker.js"></script>
 </body>
