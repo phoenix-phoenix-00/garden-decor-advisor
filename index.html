@@ -8,19 +8,37 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <h1>🌿 Bienvenue dans Garden Decor Advisor 🌿</h1>
     <p>Transformez votre jardin avec des idées de décoration personnalisées !</p>
-    <button onclick="alert('Prochaine étape : prendre une photo et décorer !')">Commencer</button>
-    <br><br>
 
-<video id="video" width="320" height="240" autoplay style="display:none;"></video>
-<canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+    <button id="start-camera">📷 Activer la Caméra</button>
+    <button id="take-photo" style="display:none;">📸 Prendre une Photo</button>
 
-<button id="start-camera" style="margin-top: 20px;">📸 Activer la Caméra</button>
-<button id="take-photo" style="margin-top: 20px; display:none;">📷 Prendre une Photo</button>
+    <video id="video" width="320" height="240" autoplay style="display:none;"></video>
+    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
 
-<div id="photo-result" style="margin-top: 20px;"></div>
-<script>
+    <div id="photo-result" style="margin-top: 20px;"></div>
+
+    <!-- Section pour les décorations -->
+    <div id="decorations" style="margin-top: 20px; text-align: center;">
+        <h3>Ajoutez des décorations :</h3>
+        <button onclick="addDecoration('papillon1.png')">🠛 Papillon 1</button>
+        <button onclick="addDecoration('papillon2.png')">🠛 Papillon 2</button>
+        <button onclick="addDecoration('fleur1.png')">🌸 Fleur 1</button>
+        <button onclick="addDecoration('fleur2.png')">🌺 Fleur 2</button>
+        <button onclick="addText('Mon Jardin')">🌿 Ajouter "Mon Jardin"</button>
+        <button onclick="addText('Nature')">🌿 Ajouter "Nature"</button>
+    </div>
+
+    <script>
+    // Récupérer les éléments
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const startCameraButton = document.getElementById('start-camera');
+    const takePhotoButton = document.getElementById('take-photo');
+    const photoResult = document.getElementById('photo-result');
+
     // Activer la caméra
     startCameraButton.addEventListener('click', async function() {
         try {
@@ -53,9 +71,57 @@
         photoResult.innerHTML = '';
         photoResult.appendChild(img);
     });
-</script>
 
+    // Fonction pour ajouter une image de décoration
+    function addDecoration(imageName) {
+        const img = document.createElement('img');
+        img.src = 'decorations/' + imageName;
+        img.className = 'decor';
+        img.style.position = 'absolute';
+        img.style.top = '100px';
+        img.style.left = '100px';
+        img.style.width = '80px';
+        img.draggable = true;
+        makeDraggable(img);
+        document.body.appendChild(img);
+    }
 
-    <script src="service-worker.js"></script>
+    // Fonction pour ajouter du texte
+    function addText(textContent) {
+        const text = document.createElement('div');
+        text.className = 'decor-text';
+        text.innerText = textContent;
+        text.style.position = 'absolute';
+        text.style.top = '150px';
+        text.style.left = '150px';
+        text.style.fontSize = '24px';
+        text.style.color = 'green';
+        text.style.fontWeight = 'bold';
+        text.draggable = true;
+        makeDraggable(text);
+        document.body.appendChild(text);
+    }
+
+    // Rendre les décorations déplaçables
+    function makeDraggable(element) {
+        let offsetX, offsetY;
+
+        element.addEventListener('dragstart', function(e) {
+            offsetX = e.offsetX;
+            offsetY = e.offsetY;
+        });
+
+        document.body.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        document.body.addEventListener('drop', function(e) {
+            e.preventDefault();
+            element.style.left = (e.pageX - offsetX) + 'px';
+            element.style.top = (e.pageY - offsetY) + 'px';
+        });
+    }
+    </script>
+
 </body>
 </html>
