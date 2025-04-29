@@ -49,6 +49,10 @@
             border-radius: 10px;
             margin-top: 20px;
         }
+        input[type="file"] {
+            margin: 15px auto;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -63,6 +67,10 @@
         <button id="take-photo" style="display:none;">📸 Prendre une Photo</button>
         <video id="video" width="320" height="240" autoplay style="display:none;"></video>
         <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+
+        <p>Ou choisissez une photo :</p>
+        <input type="file" id="upload-photo" accept="image/*">
+
         <div id="photo-result"></div>
     </div>
 
@@ -74,6 +82,7 @@
         const startCameraButton = document.getElementById('start-camera');
         const takePhotoButton = document.getElementById('take-photo');
         const photoResult = document.getElementById('photo-result');
+        const uploadPhoto = document.getElementById('upload-photo');
 
         startBtn.addEventListener('click', () => {
             startBtn.style.display = 'none';
@@ -108,13 +117,27 @@
             video.style.display = 'none';
             takePhotoButton.style.display = 'none';
 
+            afficherDecor(canvas.toDataURL('image/png'));
+        });
+
+        uploadPhoto.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                afficherDecor(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function afficherDecor(source) {
             const container = document.createElement('div');
             container.style.position = 'relative';
             container.style.display = 'inline-block';
 
             const img = document.createElement('img');
-            img.src = canvas.toDataURL('image/png');
-            img.alt = 'Photo prise';
+            img.src = source;
+            img.alt = 'Photo affichée';
             img.style.display = 'block';
 
             const deco1 = document.createElement('img');
@@ -145,7 +168,8 @@
 
             photoResult.innerHTML = '';
             photoResult.appendChild(container);
-        });
+        }
     </script>
 
 </body>
+</html>
