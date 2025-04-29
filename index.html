@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garden Decor Advisor</title>
+    <title>Kamal - Garden Decor Advisor</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>🌿 Bienvenue dans Garden Decor Advisor 🌿</h1>
+    <h1>🌿 Bienvenue dans Kamal - Garden Decor Advisor 🌿</h1>
     <p>Transformez votre jardin avec des idées de décoration personnalisées !</p>
 
     <button id="start-camera">📷 Activer la Caméra</button>
@@ -19,17 +19,6 @@
     <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
 
     <div id="photo-result" style="margin-top: 20px;"></div>
-
-    <!-- Section pour les décorations -->
-    <div id="decorations" style="margin-top: 20px; text-align: center;">
-        <h3>Ajoutez des décorations :</h3>
-        <button onclick="addDecoration('papillon1.png')">🠛 Papillon 1</button>
-        <button onclick="addDecoration('papillon2.png')">🠛 Papillon 2</button>
-        <button onclick="addDecoration('fleur1.png')">🌸 Fleur 1</button>
-        <button onclick="addDecoration('fleur2.png')">🌺 Fleur 2</button>
-        <button onclick="addText('Mon Jardin')">🌿 Ajouter "Mon Jardin"</button>
-        <button onclick="addText('Nature')">🌿 Ajouter "Nature"</button>
-    </div>
 
     <script>
     // Récupérer les éléments
@@ -51,76 +40,59 @@
         }
     });
 
-    // Prendre la photo
+    // Prendre la photo avec fond décoratif
     takePhotoButton.addEventListener('click', function() {
         const context = canvas.getContext('2d');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
+
         // Arrêter la caméra
         let tracks = video.srcObject.getTracks();
         tracks.forEach(track => track.stop());
         video.style.display = 'none';
         takePhotoButton.style.display = 'none';
-        
-        // Afficher la photo
+
+        // Afficher la photo avec fond décoratif
+        const container = document.createElement('div');
+        container.style.position = 'relative';
+        container.style.display = 'inline-block';
+
         const img = document.createElement('img');
         img.src = canvas.toDataURL('image/png');
         img.alt = 'Photo prise';
-        photoResult.innerHTML = '';
-        photoResult.appendChild(img);
-    });
+        img.style.display = 'block';
+        img.style.border = '5px solid #6ab04c';
 
-    // Fonction pour ajouter une image de décoration
-    function addDecoration(imageName) {
-        const img = document.createElement('img');
-        img.src = 'decorations/' + imageName;
-        img.className = 'decor';
-        img.style.position = 'absolute';
-        img.style.top = '100px';
-        img.style.left = '100px';
-        img.style.width = '80px';
-        img.draggable = true;
-        makeDraggable(img);
-        document.body.appendChild(img);
-    }
+        const deco1 = document.createElement('img');
+        deco1.src = 'decorations/papillon1.png';
+        deco1.style.position = 'absolute';
+        deco1.style.top = '10px';
+        deco1.style.left = '10px';
+        deco1.style.width = '50px';
 
-    // Fonction pour ajouter du texte
-    function addText(textContent) {
-        const text = document.createElement('div');
-        text.className = 'decor-text';
-        text.innerText = textContent;
+        const deco2 = document.createElement('img');
+        deco2.src = 'decorations/fleur1.png';
+        deco2.style.position = 'absolute';
+        deco2.style.bottom = '10px';
+        deco2.style.right = '10px';
+        deco2.style.width = '60px';
+
+        const text = document.createElement('img');
+        text.src = 'decorations/monjardin.png';
         text.style.position = 'absolute';
-        text.style.top = '150px';
-        text.style.left = '150px';
-        text.style.fontSize = '24px';
-        text.style.color = 'green';
-        text.style.fontWeight = 'bold';
-        text.draggable = true;
-        makeDraggable(text);
-        document.body.appendChild(text);
-    }
+        text.style.bottom = '10px';
+        text.style.left = '10px';
+        text.style.width = '120px';
 
-    // Rendre les décorations déplaçables
-    function makeDraggable(element) {
-        let offsetX, offsetY;
+        container.appendChild(img);
+        container.appendChild(deco1);
+        container.appendChild(deco2);
+        container.appendChild(text);
 
-        element.addEventListener('dragstart', function(e) {
-            offsetX = e.offsetX;
-            offsetY = e.offsetY;
-        });
-
-        document.body.addEventListener('dragover', function(e) {
-            e.preventDefault();
-        });
-
-        document.body.addEventListener('drop', function(e) {
-            e.preventDefault();
-            element.style.left = (e.pageX - offsetX) + 'px';
-            element.style.top = (e.pageY - offsetY) + 'px';
-        });
-    }
+        photoResult.innerHTML = '';
+        photoResult.appendChild(container);
+    });
     </script>
 
 </body>
