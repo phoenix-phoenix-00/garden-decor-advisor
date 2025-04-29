@@ -4,96 +4,148 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kamal - Garden Decor Advisor</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('decorations/fond-feuilles.png');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+        }
+        .menu {
+            display: none;
+            background: linear-gradient(145deg, #2d9cdb, #f1c40f);
+            padding: 30px;
+            border-radius: 20px;
+            width: 80%;
+            margin: 30px auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+        .menu button {
+            margin: 10px;
+            padding: 15px 25px;
+            font-size: 16px;
+            background-color: white;
+            border: none;
+            border-radius: 10px;
+            color: #333;
+            cursor: pointer;
+        }
+        #start-btn {
+            margin-top: 100px;
+            padding: 20px 40px;
+            font-size: 20px;
+            border-radius: 12px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #photo-result img {
+            border: 5px solid #fff;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>🌿 Bienvenue dans Kamal - Garden Decor Advisor 🌿</h1>
-    <p>Transformez votre jardin avec des idées de décoration personnalisées !</p>
+    <button id="start-btn">Commencer</button>
 
-    <button id="start-camera">📷 Activer la Caméra</button>
-    <button id="take-photo" style="display:none;">📸 Prendre une Photo</button>
-
-    <video id="video" width="320" height="240" autoplay style="display:none;"></video>
-    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
-
-    <div id="photo-result" style="margin-top: 20px;"></div>
+    <div class="menu" id="main-menu">
+        <button onclick="goBack()">Retour</button>
+        <h1>Kamal - Garden Decor Advisor</h1>
+        <p>Transformez votre jardin avec une touche de magie naturelle.</p>
+        <button id="start-camera">📷 Activer la Caméra</button>
+        <button id="take-photo" style="display:none;">📸 Prendre une Photo</button>
+        <video id="video" width="320" height="240" autoplay style="display:none;"></video>
+        <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+        <div id="photo-result"></div>
+    </div>
 
     <script>
-    // Récupérer les éléments
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const startCameraButton = document.getElementById('start-camera');
-    const takePhotoButton = document.getElementById('take-photo');
-    const photoResult = document.getElementById('photo-result');
+        const startBtn = document.getElementById('start-btn');
+        const menu = document.getElementById('main-menu');
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const startCameraButton = document.getElementById('start-camera');
+        const takePhotoButton = document.getElementById('take-photo');
+        const photoResult = document.getElementById('photo-result');
 
-    // Activer la caméra
-    startCameraButton.addEventListener('click', async function() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
-            video.style.display = 'block';
-            takePhotoButton.style.display = 'inline-block';
-        } catch (error) {
-            alert('Erreur d\'accès à la caméra : ' + error.message);
+        startBtn.addEventListener('click', () => {
+            startBtn.style.display = 'none';
+            menu.style.display = 'block';
+        });
+
+        function goBack() {
+            menu.style.display = 'none';
+            startBtn.style.display = 'block';
+            photoResult.innerHTML = '';
         }
-    });
 
-    // Prendre la photo avec fond décoratif
-    takePhotoButton.addEventListener('click', function() {
-        const context = canvas.getContext('2d');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        startCameraButton.addEventListener('click', async function() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.style.display = 'block';
+                takePhotoButton.style.display = 'inline-block';
+            } catch (error) {
+                alert('Erreur d\'accès à la caméra : ' + error.message);
+            }
+        });
 
-        // Arrêter la caméra
-        let tracks = video.srcObject.getTracks();
-        tracks.forEach(track => track.stop());
-        video.style.display = 'none';
-        takePhotoButton.style.display = 'none';
+        takePhotoButton.addEventListener('click', function() {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Afficher la photo avec fond décoratif
-        const container = document.createElement('div');
-        container.style.position = 'relative';
-        container.style.display = 'inline-block';
+            let tracks = video.srcObject.getTracks();
+            tracks.forEach(track => track.stop());
+            video.style.display = 'none';
+            takePhotoButton.style.display = 'none';
 
-        const img = document.createElement('img');
-        img.src = canvas.toDataURL('image/png');
-        img.alt = 'Photo prise';
-        img.style.display = 'block';
-        img.style.border = '5px solid #6ab04c';
+            const container = document.createElement('div');
+            container.style.position = 'relative';
+            container.style.display = 'inline-block';
 
-        const deco1 = document.createElement('img');
-        deco1.src = 'decorations/papillon1.png';
-        deco1.style.position = 'absolute';
-        deco1.style.top = '10px';
-        deco1.style.left = '10px';
-        deco1.style.width = '50px';
+            const img = document.createElement('img');
+            img.src = canvas.toDataURL('image/png');
+            img.alt = 'Photo prise';
+            img.style.display = 'block';
 
-        const deco2 = document.createElement('img');
-        deco2.src = 'decorations/fleur1.png';
-        deco2.style.position = 'absolute';
-        deco2.style.bottom = '10px';
-        deco2.style.right = '10px';
-        deco2.style.width = '60px';
+            const deco1 = document.createElement('img');
+            deco1.src = 'decorations/papillon1.png';
+            deco1.style.position = 'absolute';
+            deco1.style.top = '10px';
+            deco1.style.left = '10px';
+            deco1.style.width = '50px';
 
-        const text = document.createElement('img');
-        text.src = 'decorations/monjardin.png';
-        text.style.position = 'absolute';
-        text.style.bottom = '10px';
-        text.style.left = '10px';
-        text.style.width = '120px';
+            const deco2 = document.createElement('img');
+            deco2.src = 'decorations/fleur1.png';
+            deco2.style.position = 'absolute';
+            deco2.style.bottom = '10px';
+            deco2.style.right = '10px';
+            deco2.style.width = '60px';
 
-        container.appendChild(img);
-        container.appendChild(deco1);
-        container.appendChild(deco2);
-        container.appendChild(text);
+            const text = document.createElement('img');
+            text.src = 'decorations/monjardin.png';
+            text.style.position = 'absolute';
+            text.style.bottom = '10px';
+            text.style.left = '10px';
+            text.style.width = '120px';
 
-        photoResult.innerHTML = '';
-        photoResult.appendChild(container);
-    });
+            container.appendChild(img);
+            container.appendChild(deco1);
+            container.appendChild(deco2);
+            container.appendChild(text);
+
+            photoResult.innerHTML = '';
+            photoResult.appendChild(container);
+        });
     </script>
 
 </body>
-</html>
