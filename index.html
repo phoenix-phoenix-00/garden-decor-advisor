@@ -1,49 +1,55 @@
-const uploadPhoto = document.getElementById('upload-photo');
+takePhotoButton.addEventListener('click', function() {
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-uploadPhoto.addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    // Arrêter la caméra
+    let tracks = video.srcObject.getTracks();
+    tracks.forEach(track => track.stop());
+    video.style.display = 'none';
+    takePhotoButton.style.display = 'none';
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const container = document.createElement('div');
-        container.style.position = 'relative';
-        container.style.display = 'inline-block';
+    // Afficher la photo avec fond décoratif
+    const container = document.createElement('div');
+    container.style.position = 'relative';
+    container.style.display = 'inline-block';
 
-        const img = document.createElement('img');
-        img.src = e.target.result;
-        img.alt = 'Photo importée';
-        img.style.display = 'block';
+    const img = document.createElement('img');
+    img.src = canvas.toDataURL('image/png');
+    img.alt = 'Photo prise';
+    img.style.display = 'block';
+    img.style.border = '5px solid #6ab04c';
 
-        const deco1 = document.createElement('img');
-        deco1.src = 'decorations/papillon1.png';
-        deco1.style.position = 'absolute';
-        deco1.style.top = '10px';
-        deco1.style.left = '10px';
-        deco1.style.width = '50px';
+    // Ajout papillon
+    const deco1 = document.createElement('img');
+    deco1.src = 'decorations/papillon1.png';
+    deco1.style.position = 'absolute';
+    deco1.style.top = '10px';
+    deco1.style.left = '10px';
+    deco1.style.width = '50px';
 
-        const deco2 = document.createElement('img');
-        deco2.src = 'decorations/fleur1.png';
-        deco2.style.position = 'absolute';
-        deco2.style.bottom = '10px';
-        deco2.style.right = '10px';
-        deco2.style.width = '60px';
+    // Ajout fleur
+    const deco2 = document.createElement('img');
+    deco2.src = 'decorations/fleur1.png';
+    deco2.style.position = 'absolute';
+    deco2.style.bottom = '10px';
+    deco2.style.right = '10px';
+    deco2.style.width = '60px';
 
-        const text = document.createElement('img');
-        text.src = 'decorations/monjardin.png';
-        text.style.position = 'absolute';
-        text.style.bottom = '10px';
-        text.style.left = '10px';
-        text.style.width = '120px';
+    // Ajout texte stylisé
+    const text = document.createElement('img');
+    text.src = 'decorations/monjardin.png';
+    text.style.position = 'absolute';
+    text.style.bottom = '10px';
+    text.style.left = '10px';
+    text.style.width = '120px';
 
-        container.appendChild(img);
-        container.appendChild(deco1);
-        container.appendChild(deco2);
-        container.appendChild(text);
+    container.appendChild(img);
+    container.appendChild(deco1);
+    container.appendChild(deco2);
+    container.appendChild(text);
 
-        photoResult.innerHTML = '';
-        photoResult.appendChild(container);
-    };
-    reader.readAsDataURL(file);
+    photoResult.innerHTML = '';
+    photoResult.appendChild(container);
 });
-
