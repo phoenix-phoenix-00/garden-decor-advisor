@@ -1,114 +1,49 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kamal - Garden Decor Advisor</title>
-    <style>
-        /* (Styles inchangés, tout est OK ici) */
-    </style>
-</head>
-<body>
+const uploadPhoto = document.getElementById('upload-photo');
 
-    <button id="start-btn">Commencer</button>
+uploadPhoto.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
 
-    <div class="menu" id="main-menu">
-        <!-- (Contenu inchangé) -->
-    </div>
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const container = document.createElement('div');
+        container.style.position = 'relative';
+        container.style.display = 'inline-block';
 
-    <div class="surface-menu" id="surface-menu">
-        <!-- (Contenu inchangé) -->
-    </div>
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.alt = 'Photo importée';
+        img.style.display = 'block';
 
-    <div class="decoration-menu" id="decoration-menu">
-        <!-- (Contenu inchangé) -->
-    </div>
+        const deco1 = document.createElement('img');
+        deco1.src = 'decorations/papillon1.png';
+        deco1.style.position = 'absolute';
+        deco1.style.top = '10px';
+        deco1.style.left = '10px';
+        deco1.style.width = '50px';
 
-    <script>
-        const startBtn = document.getElementById('start-btn');
-        const menu = document.getElementById('main-menu');
-        const surfaceMenu = document.getElementById('surface-menu');
-        const decorationMenu = document.getElementById('decoration-menu');
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const startCameraButton = document.getElementById('start-camera');
-        const takePhotoButton = document.getElementById('take-photo');
-        const photoResult = document.getElementById('photo-result');
-        const uploadPhoto = document.getElementById('upload-photo');
+        const deco2 = document.createElement('img');
+        deco2.src = 'decorations/fleur1.png';
+        deco2.style.position = 'absolute';
+        deco2.style.bottom = '10px';
+        deco2.style.right = '10px';
+        deco2.style.width = '60px';
 
-        startBtn.addEventListener('click', () => {
-            startBtn.style.display = 'none';
-            menu.style.display = 'block';
-        });
+        const text = document.createElement('img');
+        text.src = 'decorations/monjardin.png';
+        text.style.position = 'absolute';
+        text.style.bottom = '10px';
+        text.style.left = '10px';
+        text.style.width = '120px';
 
-        function goBack() {
-            menu.style.display = 'none';
-            startBtn.style.display = 'block';
-            photoResult.innerHTML = '';
-        }
+        container.appendChild(img);
+        container.appendChild(deco1);
+        container.appendChild(deco2);
+        container.appendChild(text);
 
-        function goBackToMain() {
-            decorationMenu.style.display = 'none';
-            menu.style.display = 'block';
-        }
-
-        startCameraButton.addEventListener('click', async function() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-                video.style.display = 'block';
-                takePhotoButton.style.display = 'inline-block';
-            } catch (error) {
-                alert('Erreur d\'accès à la caméra : ' + error.message);
-            }
-        });
-
-        takePhotoButton.addEventListener('click', function() {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            let tracks = video.srcObject.getTracks();
-            tracks.forEach(track => track.stop());
-            video.style.display = 'none';
-            takePhotoButton.style.display = 'none';
-
-            showSurfaceMenu();
-        });
-
-        uploadPhoto.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                showSurfaceMenu();
-            };
-            reader.readAsDataURL(file);
-        });
-
-        function showSurfaceMenu() {
-            menu.style.display = 'none';
-            surfaceMenu.style.display = 'block';
-        }
-
-        function showGardenProposals() {
-            const surface = document.getElementById('surface-input').value;
-            const gardenProposals = document.getElementById('garden-proposals');
-
-            surfaceMenu.style.display = 'none';
-            decorationMenu.style.display = 'block';
-
-            if (surface < 50) {
-                gardenProposals.innerHTML = '🌸 Jardin pour petit espace : Fleurs compactes, mini-pelouse.';
-            } else if (surface >= 50 && surface <= 150) {
-                gardenProposals.innerHTML = '🌼 Jardin de taille moyenne : Arbres d\'ornement, coin détente.';
-            } else {
-                gardenProposals.innerHTML = '🌳 Grand jardin : Grand espace vert, terrasse, allées fleuries.';
-            }
-        }
-    </script>
-
-</body>
-</html>
+        photoResult.innerHTML = '';
+        photoResult.appendChild(container);
+    };
+    reader.readAsDataURL(file);
+});
 
